@@ -6,6 +6,7 @@ import { multiply } from './utils/math';
 
 function App() {
   const [value, setValue] = useState<string>('');
+  const [error, setError] = useState<string>('');
   
   const handleSubmit = async ({
     value,
@@ -14,6 +15,11 @@ function App() {
     const res = await fetch(`http://economia.awesomeapi.com.br/json/last/${coin}-BRL`);
 
     const data = await res.json();
+
+    if(!res.ok) {
+      setError(data.message);
+      return;
+    }
 
     const result = multiply(data[`${coin}BRL`].ask, value).toFixed(2);
 
@@ -24,6 +30,7 @@ function App() {
     <>
       <Form onSubmit={handleSubmit}/>
       <Highlight value={value}/>
+      {error && <div role="alert">{error}</div>}
     </>
   );
 }
